@@ -13,6 +13,12 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Unzip Project Files
+        run: |
+          if [ -f "piik_asset_app_light.zip" ]; then
+            unzip -o piik_asset_app_light.zip
+          fi
+
       - name: Set up Java JDK
         uses: actions/setup-java@v4
         with:
@@ -22,7 +28,6 @@ jobs:
       - name: Set up Flutter SDK
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.29.0'
           channel: 'stable'
           cache: true
 
@@ -32,14 +37,13 @@ jobs:
       - name: Build iOS No-Codesign IPA
         run: |
           flutter build ios --release --no-codesign
-          cd ios
-          mkdir -p Payload
-          mv build/Runner.app Payload/
+          mkdir -p build/ios/iphoneos/Payload
+          cp -r build/ios/iphoneos/Runner.app build/ios/iphoneos/Payload/
+          cd build/ios/iphoneos
           zip -r PIIK_Asset.ipa Payload
-          mv PIIK_Asset.ipa ../build/PIIK_Asset.ipa
 
       - name: Upload iOS IPA Artifact
         uses: actions/upload-artifact@v4
         with:
           name: PIIK_Asset_iOS_IPA
-          path: build/PIIK_Asset.ipa
+          path: build/ios/iphoneos/PIIK_Asset.ipa
