@@ -1,0 +1,30 @@
+name: piik_asset_app
+description: "PIIK Asset - 실시간 자산 시세 스탠바이 위젯 앱"
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.12.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  webview_flutter: ^4.10.0
+  webview_flutter_android: ^4.13.0
+  http: ^1.2.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/web/
+    - assets/web/index.html
+    - assets/web/styles.css
+    - assets/web/app.js

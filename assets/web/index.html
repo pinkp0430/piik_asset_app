@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>PIIK Asset - 실시간 자산 시세</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <div class="phone-frame" id="phoneFrame">
+      <div class="wallpaper-overlay"></div>
+
+      <!-- 1. 상단 메인 종목 시세 위젯 -->
+      <div class="widget-container">
+        <div class="widget-card" id="widgetCard">
+          <div class="widget-header">
+            <div class="asset-info">
+              <div>
+                <div class="asset-source" id="assetSource">출처: 네이버 증권 (KRX 금현물)</div>
+                <h2 class="asset-name" id="assetName">순금 시세 (24K / 1돈)</h2>
+                <div class="asset-symbol" id="assetSymbol">GOLD • 3.75g (Naver KRX)</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="widget-price-body">
+            <div class="price-display">
+              <span class="currency-symbol">₩</span>
+              <span class="main-price" id="mainPrice">707,250</span>
+            </div>
+            <div class="price-change-badge" id="priceChangeBadge">
+              <span id="changeIcon">▲</span>
+              <span id="changeAmount">+5,400</span>
+              <span id="changePercent">(+0.74%)</span>
+            </div>
+          </div>
+
+          <div class="widget-footer">
+            <div class="sync-status">
+              <span class="sync-icon">🔄</span>
+              <span id="lastUpdatedTime">마지막 갱신 시각: 방금 전</span>
+            </div>
+            <button class="instant-refresh-btn" id="instantRefreshBtn">Refresh</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. 중간: 최근 확인/검색 종목 섹션 -->
+      <div class="recent-assets-section">
+        <div class="section-title">최근 확인 종목</div>
+        <div class="asset-options-grid" id="assetOptionsGrid"></div>
+      </div>
+
+      <!-- 4. 하단: 종목 검색 바 및 드롭다운 -->
+      <div class="bottom-search-wrapper" id="searchWrapper">
+        <!-- 드롭다운 리스트 (2글자 이상 입력 시 팝업) -->
+        <div class="search-dropdown-menu hidden" id="searchDropdown"></div>
+
+        <form id="searchForm" action="javascript:void(0);" style="width: 100%;">
+          <div class="search-box-inner">
+            <input type="text" class="search-input" id="assetSearchInput" placeholder="종목명 검색 (예: 솔리드 파워, 한화, 애플...)" autocomplete="off" enterkeyhint="search">
+            <button type="button" class="clear-search-btn hidden" id="clearSearchBtn">&times;</button>
+            <button type="button" class="right-search-btn" id="rightSearchBtn">검색</button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

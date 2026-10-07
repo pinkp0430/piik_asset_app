@@ -1,0 +1,502 @@
+/* AssetGlass - Single Unified Screen Minimal Glass Design System */
+
+:root {
+  --font-main: 'Inter', 'Noto Sans KR', -apple-system, sans-serif;
+  --font-display: 'Outfit', 'Inter', sans-serif;
+  --font-scale: 1;
+
+  --glass-bg: rgba(255, 255, 255, 0.14);
+  --glass-border: rgba(255, 255, 255, 0.32);
+
+  --text-main: #ffffff;
+  --text-muted: #f1f5f9;
+  --text-dim: #cbd5e1;
+  --text-subtle: #94a3b8;
+
+  --up-color: #ff3b69;
+  --up-glow: rgba(255, 59, 105, 0.35);
+  --down-color: #38bdf8;
+  --down-glow: rgba(56, 189, 248, 0.35);
+
+  --light-sky-blue: #bae6fd;
+  --radius-phone: 40px;
+  --radius-card: 24px;
+
+  --shadow-card: 0 15px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: var(--font-main);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+body {
+  background-color: transparent;
+  color: var(--text-main);
+  min-height: 100vh;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  padding: 10px;
+}
+
+.app-container {
+  width: 100%;
+  max-width: 420px;
+  height: 100%;
+  max-height: 840px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.phone-frame {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border-radius: var(--radius-phone);
+  border: 6px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 14px 18px;
+  gap: 12px;
+}
+
+.wallpaper-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  background: transparent;
+  pointer-events: none;
+}
+
+.status-bar,
+.widget-container,
+.recent-assets-section {
+  position: relative;
+  z-index: 2;
+  flex-shrink: 0;
+}
+
+/* .status-bar {
+  display: none !important;
+}
+
+/* 1. 상단 대표 자산 카운터 위젯 */
+.widget-container {
+  width: 100%;
+  margin-top: 4px;
+}
+
+.widget-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-card);
+  padding: 18px 20px;
+  box-shadow: var(--shadow-card);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.widget-card.price-up {
+  border-color: rgba(255, 59, 105, 0.5);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4), 0 0 20px var(--up-glow);
+}
+
+.widget-card.price-down {
+  border-color: rgba(56, 189, 248, 0.5);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4), 0 0 20px var(--down-glow);
+}
+
+.widget-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.asset-source {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--light-sky-blue);
+  margin-bottom: 3px;
+  letter-spacing: 0.3px;
+}
+
+.asset-name {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-main);
+  line-height: 1.2;
+  letter-spacing: -0.3px;
+}
+
+.asset-symbol {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 2px;
+}
+
+.widget-price-body {
+  margin-bottom: 12px;
+}
+
+.price-display {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.currency-symbol {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-dim);
+}
+
+.main-price {
+  font-family: var(--font-display);
+  font-size: 38px;
+  font-weight: 800;
+  letter-spacing: -1.5px;
+  color: var(--text-main);
+  line-height: 1;
+  display: inline-block;
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.main-price.pulse-active {
+  animation: pricePulse 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes pricePulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.06); color: var(--light-sky-blue); }
+  100% { transform: scale(1); color: var(--text-main); }
+}
+
+.price-change-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+  background: rgba(255, 59, 105, 0.22);
+  color: #ff527b;
+  border: 1px solid rgba(255, 59, 105, 0.4);
+}
+
+.price-change-badge.down {
+  background: rgba(56, 189, 248, 0.22);
+  color: #38bdf8;
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+.widget-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  font-size: 11px;
+}
+
+.sync-status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--text-subtle);
+}
+
+.instant-refresh-btn {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: var(--text-main);
+  padding: 5px 14px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.instant-refresh-btn:active {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* 3. 최근 확인 종목 섹션 (고정 블록 스타일) */
+.recent-assets-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  margin-top: 2px;
+}
+
+.section-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  letter-spacing: -0.2px;
+}
+
+.asset-options-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  overflow-y: auto;
+  align-content: start;
+  flex: 1;
+  padding-right: 2px;
+}
+
+.asset-options-grid::-webkit-scrollbar {
+  width: 4px;
+}
+.asset-options-grid::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.asset-option-card {
+  height: 56px;
+  min-height: 56px;
+  max-height: 56px;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 8px 10px;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.asset-option-card:active {
+  transform: scale(0.97);
+}
+
+.asset-option-card.selected {
+  background: rgba(59, 130, 246, 0.35);
+  border-color: #3b82f6;
+  box-shadow: 0 0 12px rgba(59, 130, 246, 0.4);
+}
+
+.opt-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.opt-sub {
+  font-size: 10px;
+  color: var(--text-dim);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 4. 하단 터치 보장 검색 바 & 실시간 드롭다운 */
+.bottom-search-wrapper {
+  position: relative;
+  z-index: 999 !important;
+  pointer-events: auto !important;
+  margin-top: auto;
+  padding-top: 6px;
+  width: 100%;
+}
+
+.search-dropdown-menu {
+  position: absolute;
+  bottom: 56px;
+  left: 0;
+  right: 0;
+  background: rgba(15, 23, 42, 0.96);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  border-radius: 18px;
+  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.7);
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+  padding: 6px;
+}
+
+.search-dropdown-menu.hidden {
+  display: none !important;
+}
+
+.dropdown-item {
+  padding: 10px 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.dropdown-item:active, .dropdown-item:hover {
+  background: rgba(56, 189, 248, 0.25);
+}
+
+.dd-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.dd-sub {
+  font-size: 10px;
+  color: var(--light-sky-blue);
+  margin-top: 2px;
+}
+
+.search-box-inner {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  pointer-events: auto !important;
+}
+
+.right-search-btn {
+  background: rgba(56, 189, 248, 0.28);
+  border: 1.5px solid rgba(56, 189, 248, 0.6);
+  color: #ffffff;
+  padding: 12px 16px;
+  border-radius: 18px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-left: 8px;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  pointer-events: auto !important;
+}
+
+.right-search-btn:active {
+  transform: scale(0.94);
+  background: rgba(56, 189, 248, 0.5);
+}
+
+.search-input {
+  flex: 1;
+  width: 100%;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  color: var(--text-main);
+  padding: 13px 40px 13px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  outline: none;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  pointer-events: auto !important;
+  user-select: text !important;
+  -webkit-user-select: text !important;
+}
+
+.search-input:focus {
+  border-color: #3b82f6;
+  background: rgba(15, 23, 42, 0.95);
+  box-shadow: 0 0 18px rgba(59, 130, 246, 0.6);
+}
+
+.clear-search-btn {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--text-subtle);
+  font-size: 22px;
+  cursor: pointer;
+  pointer-events: auto !important;
+}
+
+.clear-search-btn.hidden {
+  display: none;
+}
+
+/* 실시간 드롭다운 메뉴 (2글자 이상 입력 시 팝업) */
+.search-dropdown-menu {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  margin-bottom: 10px;
+  background: #0f172a;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
+  box-shadow: 0 -15px 40px rgba(0, 0, 0, 0.85);
+  max-height: 220px;
+  overflow-y: auto;
+  z-index: 1000;
+  padding: 8px;
+}
+
+.search-dropdown-menu.hidden {
+  display: none;
+}
+
+.dropdown-item {
+  padding: 10px 14px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.dropdown-item:active,
+.dropdown-item:hover {
+  background: rgba(59, 130, 246, 0.3);
+}
+
+.dd-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.dd-sub {
+  font-size: 11px;
+  color: var(--light-sky-blue);
+  font-weight: 600;
+}

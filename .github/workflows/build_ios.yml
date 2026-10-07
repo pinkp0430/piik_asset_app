@@ -1,0 +1,45 @@
+name: Build iOS IPA (PIIK Asset)
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build-ios:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Java JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Set up Flutter SDK
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.29.0'
+          channel: 'stable'
+          cache: true
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Build iOS No-Codesign IPA
+        run: |
+          flutter build ios --release --no-codesign
+          cd ios
+          mkdir -p Payload
+          mv build/Runner.app Payload/
+          zip -r PIIK_Asset.ipa Payload
+          mv PIIK_Asset.ipa ../build/PIIK_Asset.ipa
+
+      - name: Upload iOS IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: PIIK_Asset_iOS_IPA
+          path: build/PIIK_Asset.ipa
