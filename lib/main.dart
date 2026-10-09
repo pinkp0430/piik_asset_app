@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
@@ -47,11 +48,13 @@ class MainStandbyScreen extends StatefulWidget {
 class _MainStandbyScreenState extends State<MainStandbyScreen> {
   static const MethodChannel _nativeChannel = MethodChannel('com.antigravity.piik.asset/channel');
   late final WebViewController _controller;
+  final FlutterLocalNotificationsPlugin _notificationsPlugin = FlutterLocalNotificationsPlugin();
   bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
+    _initNotifications();
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0xFF090C10))
@@ -77,6 +80,19 @@ class _MainStandbyScreenState extends State<MainStandbyScreen> {
           _searchNaverStockNative(query);
         },
       )
+      ..addJavaScriptChannel(
+        'NotificationChannel',
+        onMessageReceived: (JavaScriptMessage message) {
+          try {
+            final data = jsonDecode(message.message);
+            final title = data['title']?.toString() ?? 'PIIK Asset';
+            final body = data['body']?.toString() ?? '';
+            _showLocalNotification(title, body);
+          } catch (_) {
+            _showLocalNotification('PIIK Asset', message.message);
+          }
+        },
+      )
       ..setNavigationDelegate(
         NavigationDelegate(
           onPageStarted: (String url) {
@@ -98,6 +114,61 @@ class _MainStandbyScreenState extends State<MainStandbyScreen> {
     }
 
     _loadWebApp();
+  }
+
+  Future<void> _initNotifications() async {
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    const DarwinInitializationSettings initializationSettingsDarwin =
+        DarwinInitializationSettings(
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: true,
+    );
+    const InitializationSettings initializationSettings = InitializationSettings(
+      android: initializationSettingsAndroid,
+      iOS: initializationSettingsDarwin,
+      macOS: initializationSettingsDarwin,
+    );
+
+    await _notificationsPlugin.initialize(initializationSettings);
+
+    await _notificationsPlugin
+        .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>()
+        ?.requestPermissions(
+          alert: true,
+          badge: true,
+          sound: true,
+        );
+
+    await _notificationsPlugin
+        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+        ?.requestNotificationsPermission();
+  }
+
+  Future<void> _showLocalNotification(String title, String body) async {
+    const AndroidNotificationDetails androidNotificationDetails =
+        AndroidNotificationDetails(
+      'piik_asset_channel',
+      'PIIK Asset 시세 알림',
+      channelDescription: '자산 시세 변동 및 목표가 알림',
+      importance: Importance.max,
+      priority: Priority.high,
+    );
+    const NotificationDetails notificationDetails = NotificationDetails(
+      android: androidNotificationDetails,
+      iOS: DarwinNotificationDetails(
+        presentAlert: true,
+        presentBadge: true,
+        presentSound: true,
+      ),
+    );
+    await _notificationsPlugin.show(
+      DateTime.now().millisecondsSinceEpoch ~/ 1000,
+      title,
+      body,
+      notificationDetails,
+    );
   }
 
   Future<void> _fetchLivePriceNative(String assetId) async {
@@ -259,7 +330,7 @@ class _MainStandbyScreenState extends State<MainStandbyScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFF090C10),
       body: SafeArea(
-        top: false,
+        top: true,
         bottom: false,
         child: Stack(
           children: [
