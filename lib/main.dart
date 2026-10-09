@@ -45,7 +45,7 @@ class MainStandbyScreen extends StatefulWidget {
   State<MainStandbyScreen> createState() => _MainStandbyScreenState();
 }
 
-class _MainStandbyScreenState extends State<MainStandbyScreen> {
+class _MainStandbyScreenState extends State<MainStandbyScreen> with WidgetsBindingObserver {
   static const MethodChannel _nativeChannel = MethodChannel('com.antigravity.piik.asset/channel');
   late final WebViewController _controller;
   final FlutterLocalNotificationsPlugin _notificationsPlugin = FlutterLocalNotificationsPlugin();
@@ -54,6 +54,7 @@ class _MainStandbyScreenState extends State<MainStandbyScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _initNotifications();
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
@@ -114,6 +115,20 @@ class _MainStandbyScreenState extends State<MainStandbyScreen> {
     }
 
     _loadWebApp();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // 폰 잠금이 해제되거나 앱이 포그라운드로 다시 올라올 때 알림과 새로고침을 트리거합니다.
+      _controller.runJavaScript("if (document.getElementById('instantRefreshBtn')) { document.getElementById('instantRefreshBtn').click(); }");
+    }
   }
 
   Future<void> _initNotifications() async {
