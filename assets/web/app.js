@@ -1270,6 +1270,30 @@ function sendNativeNotification(title, body) {
 }
 window.sendNativeNotification = sendNativeNotification;
 
+window.notifyCurrentPrice = async function() {
+  let data = await fetchNaverAndUpbitPrice(state.currentAssetId);
+  if (!data) {
+    data = getStoredAssetData(state.currentAssetId);
+  }
+  
+  if (data && data.asset) {
+    const asset = data.asset;
+    const currentPrice = data.currentPrice;
+    const isUp = data.isUp;
+    const changePct = data.changePct;
+    
+    const currencySymbol = asset.currency || (asset.isKRW ? '₩' : '$');
+    const formattedPrice = asset.isKRW ? Math.round(currentPrice).toLocaleString('ko-KR') : currentPrice.toFixed(2);
+    const sign = isUp ? '+' : '';
+    const icon = isUp ? '▲' : '▼';
+    
+    const title = `${asset.name}`;
+    const body = `현재가: ${currencySymbol}${formattedPrice} (${icon} ${sign}${changePct.toFixed(2)}%)`;
+    
+    sendNativeNotification(title, body);
+  }
+};
+
 document.addEventListener('DOMContentLoaded', () => {
   initClock();
   initEvents();

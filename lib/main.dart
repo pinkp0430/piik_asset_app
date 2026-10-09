@@ -117,6 +117,8 @@ class _MainStandbyScreenState extends State<MainStandbyScreen> with WidgetsBindi
     _loadWebApp();
   }
 
+  bool _wasPaused = false;
+
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
@@ -125,9 +127,14 @@ class _MainStandbyScreenState extends State<MainStandbyScreen> with WidgetsBindi
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      // 폰 잠금이 해제되거나 앱이 포그라운드로 다시 올라올 때 알림과 새로고침을 트리거합니다.
-      _controller.runJavaScript("if (document.getElementById('instantRefreshBtn')) { document.getElementById('instantRefreshBtn').click(); }");
+    if (state == AppLifecycleState.paused) {
+      _wasPaused = true;
+    } else if (state == AppLifecycleState.resumed) {
+      if (_wasPaused) {
+        _wasPaused = false;
+        // 앱이 진짜로 백그라운드(수면)에 갔다가 돌아왔을 때만 실행 (배너 알림에 의한 일시적 inactive 무시)
+        _controller.runJavaScript("if (window.notifyCurrentPrice) { window.notifyCurrentPrice(); }");
+      }
     }
   }
 
