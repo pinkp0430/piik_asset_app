@@ -144,6 +144,13 @@ class _MainStandbyScreenState extends State<MainStandbyScreen> {
     await _notificationsPlugin
         .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
         ?.requestNotificationsPermission();
+
+    Future.delayed(const Duration(seconds: 2), () {
+      _showLocalNotification(
+        'PIIK Asset 시세 알림 활성화',
+        '실시간 자산 가격 변동 알림이 정상 등록되었습니다.',
+      );
+    });
   }
 
   Future<void> _showLocalNotification(String title, String body) async {

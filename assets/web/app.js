@@ -1247,6 +1247,8 @@ function initEvents() {
     elements.instantRefreshBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       triggerWakeSync();
+      const currentAsset = ASSETS_DATABASE[state.currentAssetId] || ASSETS_DATABASE['gold_24k_1don'];
+      sendNativeNotification('PIIK Asset 시세 갱신', `${currentAsset.name} 실시간 시세를 갱신했습니다.`);
     });
   }
 
@@ -1256,6 +1258,17 @@ function initEvents() {
     }
   });
 }
+
+function sendNativeNotification(title, body) {
+  try {
+    if (window.NotificationChannel && window.NotificationChannel.postMessage) {
+      window.NotificationChannel.postMessage(JSON.stringify({ title: title, body: body }));
+    }
+  } catch (err) {
+    console.error('Notification error:', err);
+  }
+}
+window.sendNativeNotification = sendNativeNotification;
 
 document.addEventListener('DOMContentLoaded', () => {
   initClock();
