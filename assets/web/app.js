@@ -1288,7 +1288,8 @@ window.notifyCurrentPrice = async function() {
     const icon = isUp ? '▲' : '▼';
     
     const title = `${asset.name}`;
-    const body = `현재가: ${currencySymbol}${formattedPrice} (${icon} ${sign}${changePct.toFixed(2)}%)`;
+    const timeStr = new Date().toLocaleTimeString('ko-KR', { timeZone: 'Asia/Seoul', hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    const body = `현재가: ${currencySymbol}${formattedPrice} (${icon} ${sign}${changePct.toFixed(2)}%) | ${timeStr} 갱신됨`;
     
     sendNativeNotification(title, body);
   }
